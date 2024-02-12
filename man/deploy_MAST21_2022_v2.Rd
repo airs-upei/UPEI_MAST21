@@ -5,16 +5,13 @@
 \title{Run the MAST21 2022 protocol version 2}
 \usage{
 deploy_MAST21_2022_v2(
-  musicassessr_state = "test",
- 
-    dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: "
+  musicassessr_aws = "test",
+  dinosaur_instructions =
+    "Please press the “record” button and read the sentence below out loud: "
 )
 }
 \arguments{
-\item{musicassessr_state}{}
-}
-\value{
-
+\item{musicassessr_aws}{}
 }
 \description{
 Run the MAST21 2022 protocol version 2

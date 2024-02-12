@@ -320,13 +320,14 @@ MAST_wav <- function(trial_type = c("normal", "daa", "doo"),
 
 #' deploy the MAST21 as wavs
 #'
-#' @param musicassessr_state
+#' @param musicassessr_aws
 #'
 #' @return
 #' @export
 #'
 #' @examples
-deploy_MAST21_wav <- function(musicassessr_state = 'production') {
+deploy_MAST21_wav <- function(musicassessr_aws = TRUE,
+                              app_name = "UPEI_MAST21") {
   psychTestR::make_test(
     psychTestR::join(
       MAST21_wav(include_microphone_calibration_page = TRUE),
@@ -336,7 +337,8 @@ deploy_MAST21_wav <- function(musicassessr_state = 'production') {
     opt = psychTestR::test_options(
       title = "MAST .wav test",
       admin_password = "demo",
-      additional_scripts = musicassessr::musicassessr_js(musicassessr_state)
+      additional_scripts = musicassessr::musicassessr_js(app_name = app_name,
+                                                         musicassessr_aws = musicassessr_aws)
     )
   )
 }
@@ -368,7 +370,7 @@ get_dob_page <- function(text = "When is your date of birth?") {
 }
 
 
-upei_test_options <- function(state) {
+upei_test_options <- function(musicassessr_aws) {
   psychTestR::test_options(title = "UPEI",
                            admin_password = "@irs@irs2021#",
                            enable_admin_panel = FALSE,
@@ -377,7 +379,7 @@ upei_test_options <- function(state) {
                              right_margin = 1L,
                              css = system.file('www/css/musicassessr.css', package = "musicassessr")
                            ),
-                           additional_scripts = musicassessr::musicassessr_js(state),
+                           additional_scripts = musicassessr::musicassessr_js(musicassessr_aws = musicassessr_aws),
                            languages = c("en"))
 }
 

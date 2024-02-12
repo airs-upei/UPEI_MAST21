@@ -95,7 +95,7 @@ condition_two <- function() {
 
 #' Run the MAST21 2022 protocol
 #'
-#' @param musicassessr_state
+#' @param musicassessr_aws
 #' @param dinosaur_instructions
 #' @param final_qualtrics_url
 #'
@@ -111,7 +111,7 @@ after_setup <- function(page_type = "record_midi_page",
            setup_pages = TRUE,
            data_collection_method = c("midi", "audio", "key_presses"),
            get_p_id = TRUE,
-           musicassessr_state = "test",
+           musicassessr_aws = TRUE,
            dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
            absolute_url = "https://musicog.ca/",
            final_qualtrics_url = 'https://upeiairs.qualtrics.com/jfe/form/SV_5vDAjJhxLqZw7Km?participant=') {
@@ -246,7 +246,7 @@ after_setup <- function(page_type = "record_midi_page",
 
         )
         # ,
-        # opt = upei_test_options(musicassessr_state)
+        # opt = upei_test_options(musicassessr_aws)
       # )
     }
 }
@@ -258,11 +258,9 @@ after <- function(opening_and_final_image = "https://adaptiveeartraining.com/ass
   }
 }
 
-deploy_MAST21_2022 <- function(musicassessr_state = "test",
-                               app_name = paste("UPEI ", format(Sys.Date(), "%Y"), " Study"),
+deploy_MAST21_2022 <- function(app_name = "UPEI_MAST21",
                                musicassessr_aws = FALSE,
-                               # absolute_url = "https://musicog.ca/",
-                               absolute_url = "/Users/airs/Downloads/MAST21-master/output/",
+                               absolute_url = "https://musicog.ca/",
                                data_collection_method = "audio",
                                get_p_id = FALSE,
                                dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
@@ -276,7 +274,7 @@ deploy_MAST21_2022 <- function(musicassessr_state = "test",
     get_p_id = get_p_id,
     absolute_url = absolute_url,
     dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
-    musicassessr_state = musicassessr_state,
+    musicassessr_aws = musicassessr_aws,
     data_collection_method = data_collection_method,
     final_qualtrics_url = final_qualtrics_url
   )
@@ -287,7 +285,7 @@ deploy_MAST21_2022 <- function(musicassessr_state = "test",
                                                            shiny::tags$img(src = opening_and_final_image, height = 200, width = 200)))
 
 
-  before_tl <- upei_intro(musicassessr_state)
+  before_tl <- upei_intro(musicassessr_aws)
 
 
   musicassessr::make_musicassessr_test(

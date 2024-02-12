@@ -1,12 +1,13 @@
 #' Run the MAST21 2022 protocol version 2
 #'
-#' @param musicassessr_state
+#' @param musicassessr_aws
 #'
 #' @return
 #' @export
 #'
 #' @examples
-deploy_MAST21_2022_v2 <- function(musicassessr_state = "test", dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ") {
+deploy_MAST21_2022_v2 <- function(musicassessr_aws = "test",
+                                  dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ") {
 
   psychTestR::make_test(
     psychTestR::join(
@@ -15,7 +16,7 @@ deploy_MAST21_2022_v2 <- function(musicassessr_state = "test", dinosaur_instruct
 
           musicassessr::musicassessr_init(),
 
-          upei_intro(musicassessr_state),
+          upei_intro(musicassessr_aws),
 
           musicassessr::setup_pages(input = "microphone", absolute_url = "https://musicog.ca/"),
 
@@ -108,6 +109,6 @@ deploy_MAST21_2022_v2 <- function(musicassessr_state = "test", dinosaur_instruct
       })
 
     ),
-    opt = upei_test_options(musicassessr_state)
+    opt = upei_test_options(musicassessr_aws)
   )
 }

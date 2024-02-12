@@ -4,13 +4,10 @@
 \alias{deploy_MAST21_wav}
 \title{deploy the MAST21 as wavs}
 \usage{
-deploy_MAST21_wav(musicassessr_state = "production")
+deploy_MAST21_wav(musicassessr_aws = TRUE, app_name = "UPEI_MAST21")
 }
 \arguments{
-\item{musicassessr_state}{}
-}
-\value{
-
+\item{musicassessr_aws}{}
 }
 \description{
 deploy the MAST21 as wavs
