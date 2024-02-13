@@ -95,7 +95,7 @@ condition_two <- function() {
 
 #' Run the MAST21 2022 protocol
 #'
-#' @param musicassessr_aws
+#' @param musicassessr_state
 #' @param dinosaur_instructions
 #' @param final_qualtrics_url
 #'
@@ -111,7 +111,7 @@ after_setup <- function(page_type = "record_midi_page",
            setup_pages = TRUE,
            data_collection_method = c("midi", "audio", "key_presses"),
            get_p_id = TRUE,
-           musicassessr_aws = TRUE,
+           musicassessr_state = "test",
            dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
            absolute_url = "https://musicog.ca/",
            final_qualtrics_url = 'https://upeiairs.qualtrics.com/jfe/form/SV_5vDAjJhxLqZw7Km?participant=') {
@@ -246,21 +246,17 @@ after_setup <- function(page_type = "record_midi_page",
 
         )
         # ,
-        # opt = upei_test_options(musicassessr_aws)
+        # opt = upei_test_options(musicassessr_state)
       # )
     }
 }
 
-after <- function(opening_and_final_image = "https://adaptiveeartraining.com/assets/drum.png") {
-  function() {
-    psychTestR::one_button_page(shiny::tags$div(shiny::tags$h2("Welcome to the UPEI 2024 Singing Test"),
-                                                shiny::tags$img(src = opening_and_final_image, height = 200, width = 200)))
-  }
-}
 
-deploy_MAST21_2022 <- function(app_name = "UPEI_MAST21",
+deploy_MAST21_2022 <- function(musicassessr_state = "test",
+                               app_name = paste("UPEI ", format(Sys.Date(), "%Y"), " Study"),
                                musicassessr_aws = FALSE,
-                               absolute_url = "https://musicog.ca/",
+                               # absolute_url = "https://musicog.ca/",
+
                                data_collection_method = "audio",
                                get_p_id = FALSE,
                                dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
@@ -272,20 +268,19 @@ deploy_MAST21_2022 <- function(app_name = "UPEI_MAST21",
 
   after_tl <- after_setup(
     get_p_id = get_p_id,
-    absolute_url = absolute_url,
+    # absolute_url = absolute_url,
     dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
-    musicassessr_aws = musicassessr_aws,
+    musicassessr_state = musicassessr_state,
     data_collection_method = data_collection_method,
     final_qualtrics_url = final_qualtrics_url
   )
 
-  aft <- after()
 
   welcome_pg <- psychTestR::one_button_page(shiny::tags$div(shiny::tags$h2(paste("Welcome to the UPEI ", 	format(Sys.Date(), "%Y"), " Singing Test")),
                                                            shiny::tags$img(src = opening_and_final_image, height = 200, width = 200)))
 
 
-  before_tl <- upei_intro(musicassessr_aws)
+  before_tl <- upei_intro(musicassessr_state)
 
 
   musicassessr::make_musicassessr_test(
@@ -303,8 +298,8 @@ deploy_MAST21_2022 <- function(app_name = "UPEI_MAST21",
                                          setup_options = musicassessr::setup_pages_options(input_type = if(data_collection_method == "midi") "midi_keyboard" else if(data_collection_method == "audio") "microphone" else "key_presses",
                                                                                            headphones = TRUE,
                                                                                            get_instrument_range = FALSE,
-                                                                                           SNR_test = FALSE,
-                                                                                           absolute_url = absolute_url,
+                                                                                           SNR_test = TRUE,
+                                                                                           # absolute_url = absolute_url,
                                                                                            concise_wording = TRUE))
   )
 
