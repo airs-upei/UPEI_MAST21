@@ -132,8 +132,6 @@ after_setup <- function(page_type = "record_midi_page",
           psychTestR::new_timeline(
             psychTestR::join(
 
-
-
               # musicassessr::setup_pages(input = "microphone", absolute_url = absolute_url),
 
               psychTestR::one_button_page('Although the next short test involves singing,
@@ -170,18 +168,9 @@ after_setup <- function(page_type = "record_midi_page",
 
               psychTestR::elt_save_results_to_disk(complete = FALSE),
 
-              psychTestR::module('grandfather_passage',
-                                 psychTestR::one_button_page('Please press record and reading the paragraph below out loud:'),
+              grandfather_passage(),
 
-                                 musicassessr::record_audio_page(label = "gfp",
-                                                                 page_text = shiny::tags$div(
-                                                                   shiny::tags$p(dinosaur_instructions),
-                                                                   shiny::tags$p(shiny::tags$strong("You wish to know about my grandfather. Well, he is nearly 93 years old, yet he still thinks as swiftly as ever. He dresses himself in an old black frock coat, usually several buttons missing. A long beard clings to his chin, giving those who observe him a pronounced feeling of the utmost respect. When he speaks, his voice is just a bit cracked and quivers a bit. Twice each day he plays skillfully and with zest upon a small organ. Except in the winter when the snow or ice prevents, he slowly takes a short walk in the open air each day. We have often urged him to walk more and smoke less, but he always answers, “Banana oil!” Grandfather likes to be modern in his language."))),
-                                                                 auto_next_page = TRUE),
-                                 psychTestR::elt_save_results_to_disk(complete = FALSE)
-
-
-              ),
+              voice_range_test(),
 
 
               musicassessr::long_tone_trials(num_items = 6)
@@ -298,7 +287,7 @@ deploy_MAST21_2022 <- function(musicassessr_state = "test",
                                          setup_options = musicassessr::setup_pages_options(input_type = if(data_collection_method == "midi") "midi_keyboard" else if(data_collection_method == "audio") "microphone" else "key_presses",
                                                                                            headphones = TRUE,
                                                                                            get_instrument_range = FALSE,
-                                                                                           SNR_test = TRUE,
+                                                                                           SNR_test = FALSE,
                                                                                            # absolute_url = absolute_url,
                                                                                            concise_wording = TRUE))
   )

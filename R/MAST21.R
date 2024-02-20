@@ -1,5 +1,4 @@
 
-
 setup_questions <- function() {
   psychTestR::module("setup_questions",
 
@@ -120,6 +119,47 @@ upei_intro <- function(state, append = NULL) {
        ), opt = upei_test_options(state))
    }
  }
+}
+
+grandfather_passage <- function() {
+  psychTestR::module('grandfather_passage',
+                     musicassessr::record_audio_page(label = "gfp",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$strong('Please press record and read the paragraph below out loud:'),
+                                                       shiny::tags$br(),
+                                                       shiny::tags$br(),
+                                                       shiny::tags$p("You wish to know about my grandfather. Well, he is nearly 93 years old, yet he still thinks as swiftly as ever. He dresses himself in an old black frock coat, usually several buttons missing. A long beard clings to his chin, giving those who observe him a pronounced feeling of the utmost respect. When he speaks, his voice is just a bit cracked and quivers a bit. Twice each day he plays skillfully and with zest upon a small organ. Except in the winter when the snow or ice prevents, he slowly takes a short walk in the open air each day. We have often urged him to walk more and smoke less, but he always answers, “Banana oil!” Grandfather likes to be modern in his language.")),
+                                                     auto_next_page = TRUE),
+                     psychTestR::elt_save_results_to_disk(complete = FALSE)
+
+
+  )
+}
+
+voice_range_test <- function() {
+  psychTestR::module('voice_range_test', psychTestR::join(
+                     psychTestR::one_button_page('To establish the range of your voice, please sing the following using the vowel “ah”:'),
+
+                     musicassessr::record_audio_page(label = "vrt_comfortable",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(shiny::tags$strong("A note that is comfortable for you to sing"))),
+                                                     auto_next_page = TRUE),
+                     psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+                     musicassessr::record_audio_page(label = "vrt_lowest",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(shiny::tags$strong("The lowest note you can sing"))),
+                                                     auto_next_page = TRUE),
+                     psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+                     musicassessr::record_audio_page(label = "vrt_highest",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(shiny::tags$strong("The highest note you can sing"))),
+                                                     auto_next_page = TRUE),
+                     psychTestR::elt_save_results_to_disk(complete = FALSE)
+
+  )
+  )
 }
 
 UPEI_extra_questions <- function(with_compensation_question = TRUE) {
@@ -297,21 +337,28 @@ MAST_wav <- function(trial_type = c("normal", "daa", "doo"),
     x <- paste0(file_dir,  file)
     page_lab <- paste0("MAST21_", high_or_low, "_", trial_type, "_", which(files_list == file))
     #page_lab <- paste0(sample(1:9, 10, replace = T), collapse = "")
+
     musicassessr::present_stimuli(
       stimuli = x,
       stimuli_type = "audio",
       display_modality = "auditory",
       page_type = "record_audio_page",
-      get_answer = musicassessr::get_answer_pyin,
       page_text = text,
       hideOnPlay = TRUE,
       auto_next_page = TRUE,
       page_label = page_lab,
-      volume = 0.60)
+      trigger_start_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_start_of_stimulus_fun,
+      trigger_end_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_end_of_stimulus_fun,
+      get_answer = function(input, state, ...) {
+        musicassessr::get_answer_pyin(input, state, type = "both", ...)
+      })
+
   })
 
   res <- musicassessr::insert_item_into_every_other_n_position_in_list(res, psychTestR::elt_save_results_to_disk(complete = FALSE))
   res
+
+
 
 }
 
