@@ -250,7 +250,7 @@ deploy_MAST21_2022 <- function(musicassessr_state = "test",
                                get_p_id = FALSE,
                                dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
                                final_qualtrics_url = 'https://upeiairs.qualtrics.com/jfe/form/SV_5vDAjJhxLqZw7Km?participant=',
-                               opening_and_final_image = "https://adaptiveeartraining.com/assets/drum.png"
+                               opening_and_final_image = "https://img.freepik.com/free-vector/headphone-concept-illustration_114360-2132.jpg?w=826&t=st=1708543460~exp=1708544060~hmac=7a9cba8f7104f82422a55f30f5120598e4ce64dd222a1247c8da79825dddacb6"
                                ) {
 
 
@@ -287,8 +287,8 @@ deploy_MAST21_2022 <- function(musicassessr_state = "test",
                                          setup_options = musicassessr::setup_pages_options(input_type = if(data_collection_method == "midi") "midi_keyboard" else if(data_collection_method == "audio") "microphone" else "key_presses",
                                                                                            headphones = TRUE,
                                                                                            get_instrument_range = FALSE,
-                                                                                           SNR_test = FALSE,
-                                                                                           # absolute_url = absolute_url,
+                                                                                           SNR_test = TRUE,
+                                                                                           absolute_url = character(),
                                                                                            concise_wording = TRUE))
   )
 
