@@ -76,11 +76,12 @@ upei_intro <- function(state, append = NULL) {
    t <-
      psychTestR::new_timeline(
          psychTestR::join(
-
          psychTestR::one_button_page(shiny::tags$div(
            shiny::tags$h1(paste("Welcome to the UPEI ", format(Sys.Date(), "%Y"),  " Music Testing" )),
            shiny::tags$p("Vocalization, Music Interests and Music Knowledge Questionnaire")
          )),
+
+
 
          psychTestR::NAFC_page(label = "using_chrome",
                                prompt = "Are you using the most recent version of Google Chrome?",
@@ -121,7 +122,69 @@ upei_intro <- function(state, append = NULL) {
  }
 }
 
-grandfather_passage <- function() {
+say_pd <-  function(dinosaur_instructions, body_instructions) {
+  psychTestR::module('say_pd',
+
+                     psychTestR::one_button_page(body_instructions),
+
+                     musicassessr::record_audio_page(label = "say_pd1",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(dinosaur_instructions),
+                                                       shiny::tags$p(shiny::tags$strong("The hungry purple dinosaur ate the kind, zingy fox."))),
+                                                     auto_next_page = TRUE),
+
+                     musicassessr::record_audio_page(label = "say_pd2",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(dinosaur_instructions),
+                                                       shiny::tags$p(shiny::tags$strong("The hungry purple dinosaur ate the jabbering toy crab."))),
+                                                     auto_next_page = TRUE),
+
+                     musicassessr::record_audio_page(label = "say_pd3",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(dinosaur_instructions),
+                                                       shiny::tags$p(shiny::tags$strong("The hungry purple dinosaur ate the low mad whale. "))),
+                                                     auto_next_page = TRUE),
+
+                     musicassessr::record_audio_page(label = "say_pd4",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(dinosaur_instructions),
+                                                       shiny::tags$p(shiny::tags$strong("The hungry purple dinosaur now started vending and quacking."))),
+                                                     auto_next_page = TRUE)
+                     )
+}
+
+mast_21 <-  function(mast_inst) {
+  psychTestR::module("MAST21",
+
+                     psychTestR::one_button_page(mast_inst),
+
+                     musicassessr::get_voice_range_page(with_examples = FALSE),
+
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+
+                     psychTestR::code_block(function(state, ...) {
+                       snap <- sample(1:2, 1)
+                       psychTestR::set_global("snap", snap, state)
+                     }),
+
+                     musicassessr::sing_happy_birthday_page(feedback = FALSE, label = "sing_hbd1", text = "Please sing Happy Birthday."),
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+                     condition_one(),
+                     # OR
+                     condition_two(),
+
+                     musicassessr::sing_happy_birthday_page(feedback = FALSE, label = "sing_hbd3", text = "Please sing Happy Birthday."),
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE))
+
+
+}
+
+grandfather_passage <- function(gfp_instructions, gfp_text) {
   psychTestR::module('grandfather_passage',
                      musicassessr::record_audio_page(label = "gfp",
                                                      page_text = shiny::tags$div(
@@ -160,6 +223,114 @@ voice_range_test <- function() {
 
   )
   )
+}
+
+phonation_duration <- function() {
+  psychTestR::module('phonation_duration', psychTestR::join(
+    psychTestR::one_button_page('Please a take a deep breath and sustain the vowel “ah” for as long as you can'),
+
+
+    musicassessr::record_audio_page(label = "phd_1",
+                                    page_text = shiny::tags$div(
+                                      shiny::tags$p(shiny::tags$strong('Say and hold "ah......" '))),
+                                    auto_next_page = TRUE),
+    psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+
+    musicassessr::record_audio_page(label = "phd_2",
+                                    page_text = shiny::tags$div(
+                                      shiny::tags$p(shiny::tags$p('That was great! One more time!')),
+                                    shiny::tags$p(shiny::tags$strong('Take a deep breath and hold the vowel “ah” for as long as you can'))),
+                                    auto_next_page = TRUE),
+    psychTestR::elt_save_results_to_disk(complete = FALSE)
+    )
+  )
+}
+
+make_up_an_ending <- function (page_title, page_text, sub_text) {
+
+  make_ending_file <- "make_up_ending/end_melody_low.wav"
+
+
+  psychTestR::module("make_up_ending_1",
+
+                     psychTestR::one_button_page(
+
+                       shiny::tags$div(
+                         shiny::tags$p(shiny::tags$strong(page_title)),
+                         shiny::tags$p(page_text))
+                       ),
+
+                     musicassessr::present_stimuli(
+                       stimuli = make_ending_file,
+                       stimuli_type = "audio",
+                       display_modality = "auditory",
+                       page_type = "record_audio_page",
+                       page_text = sub_text,
+                       page_title = page_title,
+                       hideOnPlay = FALSE,
+                       auto_next_page = TRUE,
+                       attempts_left = 2,
+                       volume = 2.0,
+                       page_label = "make_up_ending_1",
+                       trigger_start_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_start_of_stimulus_fun,
+                       trigger_end_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_end_of_stimulus_fun,
+                       get_answer = function(input, state, ...) {
+                         musicassessr::get_answer_pyin(input, state, type = "both", ...)
+                       }),
+
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE),
+
+                     psychTestR::NAFC_page(label = "make_up_ending_answer",
+                                           prompt = "Would you like to go again?",
+                                           choices = c("Yes", "No")),
+
+                     psychTestR::conditional(
+                       test = function(state, ...) {
+                       psychTestR::answer(state) == "Yes"
+                      }, logic = psychTestR::module("make_up_ending_2",
+
+                       musicassessr::present_stimuli(
+                         stimuli = make_ending_file,
+                         stimuli_type = "audio",
+                         display_modality = "auditory",
+                         page_type = "record_audio_page",
+                         page_text = sub_text,
+                         page_title = page_title,
+                         hideOnPlay = FALSE,
+                         auto_next_page = TRUE,
+                         attempts_left = 2,
+                         volume = 2.0,
+                         page_label = "make_up_ending_2",
+                         trigger_start_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_start_of_stimulus_fun,
+                         trigger_end_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_end_of_stimulus_fun,
+                         get_answer = function(input, state, ...) {
+                           musicassessr::get_answer_pyin(input, state, type = "both", ...)
+                         }),
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE))
+
+
+
+                     )
+
+
+           )
+}
+
+
+sing_favourite_song <- function (page_text) {
+
+
+  psychTestR::module("favourite_song",
+
+                     musicassessr::record_audio_page(label = "favourite_song",
+                                                     page_text = shiny::tags$div(
+                                                       shiny::tags$p(shiny::tags$strong(page_text))),
+                                                     auto_next_page = TRUE),
+
+                     psychTestR::elt_save_results_to_disk(complete = FALSE))
 }
 
 UPEI_extra_questions <- function(with_compensation_question = TRUE) {
@@ -347,6 +518,7 @@ MAST_wav <- function(trial_type = c("normal", "daa", "doo"),
       hideOnPlay = TRUE,
       auto_next_page = TRUE,
       page_label = page_lab,
+      volume = 1,
       trigger_start_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_start_of_stimulus_fun,
       trigger_end_of_stimulus_fun = musicassessr::paradigm(paradigm_type = "call_and_response", page_type = "record_audio_page", call_and_response_end = "manual")$trigger_end_of_stimulus_fun,
       get_answer = function(input, state, ...) {
