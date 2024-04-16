@@ -101,6 +101,7 @@ upei_intro <- function(state, append = NULL) {
 
          get_upei_id(),
 
+
          psychTestR::elt_save_results_to_disk(complete = FALSE)
 
 
@@ -121,7 +122,58 @@ upei_intro <- function(state, append = NULL) {
    }
  }
 }
+upei_intro_part2 <- function(state, append = NULL) {
 
+
+  function() {
+    t <-
+      psychTestR::new_timeline(
+        psychTestR::join(
+          psychTestR::one_button_page(shiny::tags$div(
+            shiny::tags$h1(paste("Welcome to the Part 2 of the UPEI ", format(Sys.Date(), "%Y"),  " Music Testing" )),
+            shiny::tags$p("Vocalization, Music Interests and Music Knowledge Questionnaire")
+          )),
+
+
+
+          psychTestR::NAFC_page(label = "using_chrome",
+                                prompt = "Are you using the most recent version of Google Chrome?",
+                                choices = c("Yes", "No"),
+                                save_answer = FALSE),
+
+          psychTestR::conditional(test = function(state, answer, ...) {
+            psychTestR::answer(state) == "No"
+          }, logic = psychTestR::final_page(shiny::tags$div(shiny::tags$p("Please use the following link to access the instructions to download the latest version: ",
+                                                                          shiny::tags$a("https://www.google.com/intl/en_uk/chrome/",
+                                                                                        href = "https://www.google.com/intl/en_uk/chrome/", target = "_blank")),
+                                                            shiny::tags$p("After you have downloaded the latest version simply proceed to  ",
+                                                                          shiny::tags$a("https://musicog.ca/upei_2022/", href = "https://musicog.ca/upei_2022/", target = "_blank"), "to start again.")))),
+
+
+          return_questions(append),
+
+          get_upei_id(),
+
+          psychTestR::elt_save_results_to_disk(complete = FALSE)
+
+
+        )
+      )
+
+
+    if(is.null(append)) {
+      t
+    } else {
+      psychTestR::make_test(
+        psychTestR::join(
+          t,
+          append,
+          psychTestR::elt_save_results_to_disk(complete = TRUE),
+          psychTestR::final_page("You have finished this section.")
+        ), opt = upei_test_options(state))
+    }
+  }
+}
 say_pd <-  function(dinosaur_instructions, body_instructions) {
   psychTestR::module('say_pd',
 

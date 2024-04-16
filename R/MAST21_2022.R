@@ -136,6 +136,7 @@ after_setup <- function(page_type = "record_midi_page",
 
 
 
+#
               say_pd(dinosaur_instructions = "Please press the “record” button and read the sentence below out loud: ",
               body_instructions = 'Although the next short test involves singing,
                                       we would like to start off by asking you to read out loud four short sentences all beginning with the phrase
@@ -153,7 +154,6 @@ after_setup <- function(page_type = "record_midi_page",
             default_lang = language
 
       ), # end timeline (it's not needed from here onwards, and the SAA is embedded in UPEI_extra_questions, so to avoid nesting)
-
 
 
 
@@ -259,7 +259,6 @@ deploy_MAST21_2024_v2 <- function(
 
 
 
-
   after_tl <- after_setup_v2(
     get_p_id = get_p_id,
     # absolute_url = absolute_url,
@@ -300,6 +299,62 @@ deploy_MAST21_2024_v2 <- function(
 
 
 }
+
+deploy_MAST21_2024_v3 <- function(
+    app_name = paste("UPEI ", format(Sys.Date(), "%Y"), " Study"),
+    language,
+    musicassessr_aws = FALSE,
+    # absolute_url = "https://musicog.ca/",
+    data_collection_method = "audio",
+    get_p_id = FALSE,
+    final_qualtrics_url = 'https://upeiairs.qualtrics.com/jfe/form/SV_5vDAjJhxLqZw7Km?participant=',
+    opening_and_final_image = "https://img.freepik.com/free-vector/headphone-concept-illustration_114360-2132.jpg?w=826&t=st=1708543460~exp=1708544060~hmac=7a9cba8f7104f82422a55f30f5120598e4ce64dd222a1247c8da79825dddacb6"
+) {
+
+
+
+
+  after_tl <- after_setup_v3(
+    get_p_id = get_p_id,
+    # absolute_url = absolute_url,
+    data_collection_method = data_collection_method,
+    final_qualtrics_url = final_qualtrics_url,
+    language = language
+  )
+
+
+  welcome_pg <- psychTestR::one_button_page(shiny::tags$div(shiny::tags$h2(paste("Welcome to the UPEI ", 	format(Sys.Date(), "%Y"), " Singing Test")),
+                                                            shiny::tags$img(src = opening_and_final_image, height = 200, width = 200)))
+
+
+  before_tl <- upei_intro_part2(musicassessr_state)
+
+
+  musicassessr::make_musicassessr_test(
+    welcome_page = welcome_pg,
+    elts = after_tl,
+    # elts = aft,
+    elts_before_setup_pages = before_tl,
+    title = paste("UPEI ", format(Sys.Date(), "%Y"), " Singing Test"),
+    admin_password = "demo",
+    languages = language,
+    opt = musicassessr::musicassessr_opt(app_name = app_name,
+                                         get_p_id = get_p_id,
+                                         midi_input = data_collection_method == "midi",
+                                         record_audio = data_collection_method == "audio",
+                                         musicassessr_aws = musicassessr_aws,
+                                         setup_options = musicassessr::setup_pages_options(input_type = if(data_collection_method == "midi") "midi_keyboard" else if(data_collection_method == "audio") "microphone" else "key_presses",
+                                                                                           headphones = TRUE,
+                                                                                           get_instrument_range = FALSE,
+                                                                                           SNR_test = TRUE,
+                                                                                           absolute_url = character(),
+                                                                                           concise_wording = TRUE)
+    )
+  )
+
+
+}
+
 
 
 after_setup_v2 <- function(page_type = "record_midi_page",
@@ -395,6 +450,66 @@ after_setup_v2 <- function(page_type = "record_midi_page",
   }
 }
 
+
+
+after_setup_v3 <- function(page_type = "record_midi_page",
+                           setup_pages = TRUE,
+                           data_collection_method = c("midi", "audio", "key_presses"),
+                           get_p_id = TRUE,
+                           language,
+                           absolute_url = "https://musicog.ca/",
+                           final_qualtrics_url = 'https://upeiairs.qualtrics.com/jfe/form/SV_5vDAjJhxLqZw7Km?participant=') {
+
+  data_collection_method <- match.arg(data_collection_method)
+
+
+  stopifnot(
+    page_type %in% c("record_midi_page", "record_audio_page", "record_key_presses_page"),
+    is.scalar.logical(setup_pages),
+    is.scalar.character(data_collection_method),
+    is.scalar.logical(get_p_id)
+  )
+
+  function() {
+    # psychTestR::make_test(
+    psychTestR::join(
+      psychTestR::new_timeline(
+        psychTestR::join(
+
+
+          grandfather_passage(),
+
+          voice_range_test(),
+
+          phonation_duration()
+
+        ),
+
+        dict  = musicassessr::dict(NULL),
+        default_lang = language
+
+      ), # end timeline (it's not needed from here onwards, and the SAA is embedded in UPEI_extra_questions, so to avoid nesting)
+
+
+
+
+      make_up_an_ending("Make up an Ending", "Please make up an ending to the following short melody on the syllable “doo”.
+                         Listen to the short melody. It will play twice.
+                         Then sing the melody and make up an ending to it. It can be as long or as short as you like.",
+                        "Please make up an ending to the following short melody on the syllable “doo”."),
+
+      sing_favourite_song("Please sing your favourite song."),
+
+
+
+      psychTestR::elt_save_results_to_disk(complete = TRUE)
+
+    )
+    # ,
+    # opt = upei_test_options(musicassessr_state)
+    # )
+  }
+}
 # deploy_MAST21_2022('test')
 
 # install_github('sebsilas/MAST21')
